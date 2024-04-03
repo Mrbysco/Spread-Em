@@ -1,6 +1,8 @@
 {
-    "pack": {
-        "description": "Spread Em resources",
-        "pack_format": 3
-    }
+  "pack": {
+    "description": {
+      "text": "Spread Em resources"
+    },
+    "pack_format": 15
+  }
 }

@@ -1,78 +1,69 @@
 package com.mrbysco.spreadem.config;
 
-import java.util.ArrayList;
-
-import com.mrbysco.spreadem.Reference;
 import com.mrbysco.spreadem.SpreadEm;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
+import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import java.util.ArrayList;
+import java.util.List;
 
-@Config(modid = Reference.MOD_ID, name = "SpreadEm", category = "")
-@Config.LangKey("spreadem.config.title")
 public class SpreadConfig {
-    @Config.Comment({"General settings"})
-    public static General general = new General();
 
-    public static class General{
-        @Config.Comment("Sets the dimension the player is spread in [0 = overworld] [default: 0]")
-        public int spreadDimension = 0;
+	public static class Common {
+		public final ForgeConfigSpec.ConfigValue<? extends String> spreadDimension;
+		public final ForgeConfigSpec.IntValue spreadDistance;
+		public final ForgeConfigSpec.BooleanValue blacklistOceans;
+		public final ForgeConfigSpec.ConfigValue<List<? extends String>> biomeBlacklist;
 
-        @Config.Comment("Sets the distance it uses to spread players in blocks [default: 2000]")
-        @Config.RangeInt(min = 1)
-        public int spreadDistance = 2000;
-    }
+		Common(ForgeConfigSpec.Builder builder) {
+			//General settings
+			builder.comment("General settings")
+					.push("general");
 
-    @Config.Comment({"Blacklist settings"})
-    public static BlackList blacklist = new BlackList();
+			spreadDimension = builder
+					.comment("The dimension in which players are spread (default: minecraft:overworld)")
+					.define("spreadDimension", "minecraft:overworld", o -> o instanceof String);
 
-    public static class BlackList{
-        @Config.Comment("Adding biome names to this list will stop the player from being spawned in that biome")
-        public String[] biomeBlacklist = new String[]
-                {
-                        "minecraft:ocean",
-                        "minecraft:deep_ocean",
-                        "minecraft:frozen_ocean",
-                        "minecraft:river",
-                        "minecraft:frozen_river"
-                };
-    }
-    
+			spreadDistance = builder
+					.comment("The distance used to spread players in blocks (default: 2000)")
+					.defineInRange("spreadDistance", 1, 2000, Integer.MAX_VALUE);
 
-    @Config.Ignore
-    public static ArrayList<ResourceLocation> _blacklistedBiomes = new ArrayList<>();
-    
-    public static void initBlacklist()
-    {
-    	_blacklistedBiomes.clear();
-    	
-    	for(String name : SpreadConfig.blacklist.biomeBlacklist) {
-    		name.trim();
-    		if(!name.isEmpty()) {
-    			final ResourceLocation resource = new ResourceLocation(name);
-    			if(ForgeRegistries.BIOMES.containsKey(resource)) {
-    				_blacklistedBiomes.add(resource);
-    			} else {
-    				SpreadEm.logger.error("Config: Failed to locate biome by the name of " + name);
-    			}
-    		}
-    	}
-    }
+			builder.pop();
 
-    @Mod.EventBusSubscriber(modid = Reference.MOD_ID)
-    private static class EventHandler {
+			//Blacklist settings
+			builder.comment("Blacklist Settings")
+					.push("blacklist");
 
-        @SubscribeEvent
-        public static void onConfigChanged(final ConfigChangedEvent.OnConfigChangedEvent event) {
-            if (event.getModID().equals(Reference.MOD_ID)) {
-                ConfigManager.sync(Reference.MOD_ID, Config.Type.INSTANCE);
-                initBlacklist();
-            }
-        }
-    }
+			blacklistOceans = builder
+					.comment("If this is set to true, the mod will use the tag for ocean biomes to blacklist them (default: true)")
+					.define("blacklistOceans", true);
+
+			biomeBlacklist = builder
+					.comment("Biomes in this list will be blacklisted from having players spawn in them. By default the mod uses a tag for ocean biomes.")
+					.defineListAllowEmpty("biomeBlacklist", ArrayList::new, o -> (o instanceof String));
+
+			builder.pop();
+		}
+	}
+
+	public static final ForgeConfigSpec commonSpec;
+	public static final Common COMMON;
+
+	static {
+		final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+		commonSpec = specPair.getRight();
+		COMMON = specPair.getLeft();
+	}
+
+	@SubscribeEvent
+	public static void onLoad(final ModConfigEvent.Loading configEvent) {
+		SpreadEm.LOGGER.debug("Loaded Spread Em's config file {}", configEvent.getConfig().getFileName());
+	}
+
+	@SubscribeEvent
+	public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
+		SpreadEm.LOGGER.warn("Spread Em's config just got changed on the file system!");
+	}
 }

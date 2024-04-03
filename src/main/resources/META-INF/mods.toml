@@ -1,0 +1,21 @@
+modLoader="javafml"
+loaderVersion="[46,)"
+issueTrackerURL="https://github.com/Mrbysco/spread-em/issues"
+license="MIT"
+
+[[mods]]
+modId="spreadem"
+version="${file.jarVersion}"
+displayName="Spread Em"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/spread-em"
+authors="Mrbysco"
+description='''
+Spreading players since 2019 (Even if the mod wasn't public until 2024)
+'''
+
+[[dependencies.spreadem]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20,1.21)"
+ordering="NONE"
+side="BOTH"

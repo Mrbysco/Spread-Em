@@ -1,7 +1,0 @@
-#Config
-spreadem.config.title=Spread-Em Config
-
-#Command
-commands.spreadem.usage=/spreadem
-commands.spreadem.set.usage=/spreadem set <UUID> <x> <y> <z>
-commands.spreadem.remove.usage=/spreadem remove <UUID>
