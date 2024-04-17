@@ -12,7 +12,6 @@ import java.util.List;
 public class SpreadConfig {
 
 	public static class Common {
-		public final ForgeConfigSpec.ConfigValue<? extends String> spreadDimension;
 		public final ForgeConfigSpec.IntValue spreadDistance;
 		public final ForgeConfigSpec.BooleanValue blacklistOceans;
 		public final ForgeConfigSpec.ConfigValue<List<? extends String>> biomeBlacklist;
@@ -21,10 +20,6 @@ public class SpreadConfig {
 			//General settings
 			builder.comment("General settings")
 					.push("general");
-
-			spreadDimension = builder
-					.comment("The dimension in which players are spread (default: minecraft:overworld)")
-					.define("spreadDimension", "minecraft:overworld", o -> o instanceof String);
 
 			spreadDistance = builder
 					.comment("The distance used to spread players in blocks (default: 2000)")
