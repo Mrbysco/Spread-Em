@@ -2,6 +2,7 @@ package com.mrbysco.spreadem;
 
 import com.mojang.logging.LogUtils;
 import com.mrbysco.spreadem.config.SpreadConfig;
+import com.mrbysco.spreadem.handlers.SpreadHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 public class SpreadEm {
 	public static final String MOD_ID = "spreadem";
 	public static final String knownPlayer = MOD_ID + ".knownPlayer";
+	public static final String customSpawn = MOD_ID + ".customSpawn";
 
 	public static final Logger LOGGER = LogUtils.getLogger();
 
@@ -22,6 +24,6 @@ public class SpreadEm {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SpreadConfig.commonSpec);
 		eventBus.register(SpreadConfig.class);
 
-		MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(new SpreadHandler());
 	}
 }
