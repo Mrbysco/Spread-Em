@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 public class SpreadUtil {
 
 	public static BlockPos generateSpawnPosition(ServerPlayer serverPlayer) {
+		final int maxDist = SpreadConfig.COMMON.spreadDistance.get();
 		ServerLevel serverLevel = serverPlayer.serverLevel();
 		RandomSource random = serverPlayer.getRandom();
 		BlockPos spawnPos = serverPlayer.getRespawnPosition();
@@ -34,9 +35,9 @@ public class SpreadUtil {
 			int tries = 10;
 			BlockPos pos = null;
 			while ((pos == null || isBlackListed(serverLevel.getBiome(pos))) && tries != 0) {
-				int xPos = random.nextInt(SpreadConfig.COMMON.spreadDistance.get());
+				int xPos = random.nextInt(maxDist);
 				if (random.nextBoolean()) xPos = -xPos;
-				int YPos = random.nextInt(SpreadConfig.COMMON.spreadDistance.get());
+				int YPos = random.nextInt(maxDist);
 				if (random.nextBoolean()) YPos = -YPos;
 
 				BlockPos position;
