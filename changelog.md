@@ -1,1 +1,1 @@
-* Initial beta
+* Fix default config value for `spreadDistance`
