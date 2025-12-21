@@ -14,8 +14,6 @@ import org.slf4j.Logger;
 @Mod(SpreadEm.MOD_ID)
 public class SpreadEm {
 	public static final String MOD_ID = "spreadem";
-	public static final String knownPlayer = MOD_ID + ".knownPlayer";
-	public static final String customSpawn = MOD_ID + ".customSpawn";
 
 	public static final Logger LOGGER = LogUtils.getLogger();
 
