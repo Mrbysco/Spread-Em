@@ -23,7 +23,7 @@ public class SpreadConfig {
 
 			spreadDistance = builder
 					.comment("The distance used to spread players in blocks (default: 2000)")
-					.defineInRange("spreadDistance", 1, 2000, Integer.MAX_VALUE);
+					.defineInRange("spreadDistance", 2000, 1, Integer.MAX_VALUE);
 
 			builder.pop();
 
