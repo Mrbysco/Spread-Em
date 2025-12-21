@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import javax.annotation.Nullable;
 
@@ -70,7 +70,7 @@ public class SpreadUtil {
 	}
 
 	private static boolean isBlackListed(Holder<Biome> biomeHolder) {
-		if (SpreadConfig.COMMON.blacklistOceans.get() && biomeHolder.is(Tags.Biomes.IS_WATER)) return true;
+		if (SpreadConfig.COMMON.blacklistOceans.get() && biomeHolder.is(Tags.Biomes.IS_AQUATIC)) return true;
 
 		if (SpreadConfig.COMMON.biomeBlacklist.get().isEmpty()) return false;
 		for (String biome : SpreadConfig.COMMON.biomeBlacklist.get()) {

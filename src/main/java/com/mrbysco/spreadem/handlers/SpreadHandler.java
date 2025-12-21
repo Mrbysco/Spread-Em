@@ -6,8 +6,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+
+import java.util.Set;
 
 public class SpreadHandler {
 	@SubscribeEvent
@@ -25,7 +27,7 @@ public class SpreadHandler {
 				spawnData.setDirty();
 
 				BlockPos alteredSpawn = SpreadUtil.getFudgedSpawnPos(serverPlayer, generatedPos);
-				serverPlayer.teleportToWithTicket(alteredSpawn.getX(), alteredSpawn.getY(), alteredSpawn.getZ());
+				serverPlayer.teleportTo(serverLevel, alteredSpawn.getX(), alteredSpawn.getY(), alteredSpawn.getZ(), Set.of(), serverPlayer.getYRot(), serverPlayer.getXRot());
 			}
 		}
 	}
@@ -48,7 +50,7 @@ public class SpreadHandler {
 
 			if (position != null && position.equals(respawnPos)) {
 				BlockPos alteredSpawn = SpreadUtil.getFudgedSpawnPos(serverPlayer, position);
-				serverPlayer.teleportToWithTicket(alteredSpawn.getX(), alteredSpawn.getY(), alteredSpawn.getZ());
+				serverPlayer.teleportTo(serverLevel, alteredSpawn.getX(), alteredSpawn.getY(), alteredSpawn.getZ(), Set.of(), serverPlayer.getYRot(), serverPlayer.getXRot());
 			}
 		}
 	}

@@ -2,11 +2,13 @@ package com.mrbysco.spreadem.data;
 
 import com.mrbysco.spreadem.SpreadEm;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +42,7 @@ public class SpawnData extends SavedData {
 		return spawnMap.getOrDefault(uuid, null);
 	}
 
-	public static SpawnData load(CompoundTag nbt) {
+	public static SpawnData load(CompoundTag nbt, HolderLookup.Provider provider) {
 		Map<UUID, BlockPos> spawnMap = new HashMap<>();
 		CompoundTag spawnMapCompound = nbt.getCompound("SpawnMap");
 		for (String key : spawnMapCompound.getAllKeys()) {
@@ -52,8 +54,10 @@ public class SpawnData extends SavedData {
 		return new SpawnData(spawnMap);
 	}
 
+
+	@NotNull
 	@Override
-	public CompoundTag save(CompoundTag compound) {
+	public CompoundTag save(@NotNull CompoundTag compound, @NotNull HolderLookup.Provider provider) {
 		CompoundTag spawnMapCompound = new CompoundTag();
 		for (Map.Entry<UUID, BlockPos> entry : spawnMap.entrySet()) {
 			CompoundTag spawnCompound = new CompoundTag();
@@ -74,6 +78,6 @@ public class SpawnData extends SavedData {
 
 		assert overworld != null;
 		DimensionDataStorage storage = overworld.getDataStorage();
-		return storage.computeIfAbsent(SpawnData::load, SpawnData::new, DATA_NAME);
+		return storage.computeIfAbsent(new Factory<>(SpawnData::new, SpawnData::load), DATA_NAME);
 	}
 }
