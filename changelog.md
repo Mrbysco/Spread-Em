@@ -1,1 +1,2 @@
-* Fix default config value for `spreadDistance`
+* Update to 1.21.1 (NeoForge)
+* Enable in-game config
