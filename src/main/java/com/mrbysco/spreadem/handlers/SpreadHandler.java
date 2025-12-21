@@ -46,7 +46,7 @@ public class SpreadHandler {
 				}
 			}
 
-			if (position != null && respawnPos != null && position.equals(respawnPos)) {
+			if (position != null && position.equals(respawnPos)) {
 				BlockPos alteredSpawn = SpreadUtil.getFudgedSpawnPos(serverPlayer, position);
 				serverPlayer.teleportToWithTicket(alteredSpawn.getX(), alteredSpawn.getY(), alteredSpawn.getZ());
 			}
