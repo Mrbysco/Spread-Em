@@ -1,2 +1,1 @@
-* Update to 1.21.1 (NeoForge)
-* Enable in-game config
+* Update to 26.1.2
