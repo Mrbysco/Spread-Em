@@ -8,7 +8,7 @@ Giving each player a different spawn location.
 
 ## License ##
 * Spread Em is licensed under the MIT License
-  - (c) 2024 Mrbysco
+  - (c) 2026 Mrbysco
   - [![License](https://img.shields.io/badge/License-MIT-red.svg?style=flat)](http://opensource.org/licenses/MIT)
 
 ## Downloads ##
