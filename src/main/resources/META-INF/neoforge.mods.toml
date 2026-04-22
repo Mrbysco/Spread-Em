@@ -16,6 +16,6 @@ Spreading players since 2019 (Even if the mod wasn't public until 2024)
 [[dependencies.spreadem]]
 modId="minecraft"
 type="required"
-versionRange="[1.21,1.22)"
+versionRange="[26.1.1,)"
 ordering="NONE"
 side="BOTH"

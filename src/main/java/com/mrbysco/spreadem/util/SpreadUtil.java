@@ -6,8 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.SectionPos;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -17,20 +17,23 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.common.Tags;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public class SpreadUtil {
 
+	@Nullable
 	public static BlockPos generateSpawnPosition(ServerPlayer serverPlayer) {
 		final int maxDist = SpreadConfig.COMMON.spreadDistance.get();
-		ServerLevel serverLevel = serverPlayer.serverLevel();
+		ServerLevel serverLevel = serverPlayer.level();
 		RandomSource random = serverPlayer.getRandom();
-		BlockPos spawnPos = serverPlayer.getRespawnPosition();
-		if (spawnPos == null) {
-			BlockPos fallBackPos = serverLevel.getSharedSpawnPos();
+		ServerPlayer.RespawnConfig respawnConfig = serverPlayer.getRespawnConfig();
+		if (respawnConfig == null) {
+			BlockPos spawnPos;
+			BlockPos fallBackPos = serverLevel.getRespawnData().pos();
 			//Generate a spawn position
 			int tries = 10;
 			BlockPos pos = null;
@@ -62,11 +65,13 @@ public class SpreadUtil {
 				spawnPos = pos;
 			}
 
-			if (spawnPos.getY() <= serverLevel.getMinBuildHeight()) {
+			if (spawnPos.getY() <= serverLevel.getMinY()) {
 				spawnPos = fallBackPos; //If the spawn position is below the minimum build height, fall back to world spawn
 			}
+			return spawnPos;
+		} else {
+			return respawnConfig.respawnData().pos();
 		}
-		return spawnPos;
 	}
 
 	private static boolean isBlackListed(Holder<Biome> biomeHolder) {
@@ -74,7 +79,7 @@ public class SpreadUtil {
 
 		if (SpreadConfig.COMMON.biomeBlacklist.get().isEmpty()) return false;
 		for (String biome : SpreadConfig.COMMON.biomeBlacklist.get()) {
-			ResourceLocation location = biomeHolder.unwrapKey().map(ResourceKey::location).orElse(null);
+			Identifier location = biomeHolder.unwrapKey().map(ResourceKey::identifier).orElse(null);
 			if (location != null && location.toString().equals(biome)) {
 				return true;
 			}
@@ -83,9 +88,9 @@ public class SpreadUtil {
 	}
 
 	public static BlockPos getFudgedSpawnPos(ServerPlayer serverPlayer, BlockPos blockpos) {
-		ServerLevel serverLevel = serverPlayer.serverLevel();
+		ServerLevel serverLevel = serverPlayer.level();
 		if (serverLevel.dimensionType().hasSkyLight() && serverLevel.getServer().getWorldData().getGameType() != GameType.ADVENTURE) {
-			int spawnRadius = Math.max(0, serverPlayer.server.getSpawnRadius(serverLevel));
+			int spawnRadius = Math.max(0, serverLevel.getGameRules().get(GameRules.RESPAWN_RADIUS));
 			int distToBorder = Mth.floor(serverLevel.getWorldBorder().getDistanceToBorder((double) blockpos.getX(), (double) blockpos.getZ()));
 			if (distToBorder < spawnRadius) {
 				spawnRadius = distToBorder;
@@ -121,12 +126,12 @@ public class SpreadUtil {
 		int i = hasCeiling ?
 				serverLevel.getChunkSource().getGenerator().getSpawnHeight(serverLevel) :
 				levelchunk.getHeight(Heightmap.Types.MOTION_BLOCKING, pX & 15, pZ & 15);
-		if (i >= serverLevel.getMinBuildHeight()) {
+		if (i >= serverLevel.getMinY()) {
 			int j = levelchunk.getHeight(Heightmap.Types.WORLD_SURFACE, pX & 15, pZ & 15);
 			if (j > i || j <= levelchunk.getHeight(Heightmap.Types.OCEAN_FLOOR, pX & 15, pZ & 15)) {
 				BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
 
-				for (int k = i + 1; k >= serverLevel.getMinBuildHeight(); --k) {
+				for (int k = i + 1; k >= serverLevel.getMinY(); --k) {
 					blockpos$mutableblockpos.set(pX, k, pZ);
 					BlockState blockstate = serverLevel.getBlockState(blockpos$mutableblockpos);
 					if (!blockstate.getFluidState().isEmpty()) {
